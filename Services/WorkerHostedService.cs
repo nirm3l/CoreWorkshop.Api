@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 
 public class WorkerHostedService : BackgroundService
 {
-    private bool loop = true;
-
     private static string URL = "https://stream.wikimedia.org/v2/stream/recentchange";
     
     protected override async Task ExecuteAsync(CancellationToken stopToken) {
@@ -18,7 +16,7 @@ public class WorkerHostedService : BackgroundService
     private async Task LoadWikiRecords() {
         HttpClient client = new HttpClient();
 
-        while (loop) {
+        while (true) {
             try {
                 using (var streamReader = new StreamReader(await client.GetStreamAsync(URL))) {
                     while (!streamReader.EndOfStream) {
