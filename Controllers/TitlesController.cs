@@ -51,6 +51,29 @@ public class TitlesController : ControllerBase
         }
     }
 
+    [HttpGet(Name = "FilterWikiTitles")]
+    [Route("/titles/filter/{word}")]
+    public async Task GetWikiTitlesFiltered(string word)
+    {
+        setupResponse();
+
+        WikiRecord lastRecord = null;
+            
+        while (true) {
+            var records = WikiService.GetNewWikiRecords(lastRecord);
+
+            foreach (WikiRecord record in records) {
+                if (record.title.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) != -1) {
+                    await Response.WriteAsync($"data: {record.title}\r\r");
+                }
+
+                lastRecord = record;
+            }
+
+            await Task.Delay(100);
+        }
+    }
+
     private void setupResponse() {
         Response.Headers.Add("Cache-Control", "no-cache");
         Response.Headers.Add("Content-Type", "text/event-stream");
